@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard de Testes</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f4f9;
+            color: #333;
+            padding: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #1e3a5f;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #666;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 10px #00000010;
+        }
+
+        .card h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: #666;
+        }
+
+        .card p {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .total { color: #2878d0; }
+        .aprovados { color: #16a34a; }
+        .falhas { color: #dc2626; }
+        .taxa { color: #8b5cf6; }
+
+        .painel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px #00000010;
+            margin-bottom: 25px;
+        }
+
+        .painel h2 {
+            margin-bottom: 20px;
+            color: #1e3a5f;
+        }
+
+        button {
+            background: #2878d0;
+            color: white;
+            border: none;
+            padding: 13px 22px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background: #165da8;
+        }
+
+        .tabela {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #eaf1f8;
+            color: #1e3a5f;
+        }
+
+        .passou {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .falhou {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .resumo {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 10px #00000010;
+        }
+
+        .resumo p {
+            margin-top: 12px;
+            font-size: 17px;
+        }
+
+        @media (max-width: 750px) {
+            body {
+                padding: 15px;
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Dashboard de Testes</h1>
+        <p>Verificador de Idade - Testes Unitários</p>
+    </header>
+
+    <section class="cards">
+
+        <div class="card">
+            <h3>Total de Testes</h3>
+            <p class="total" id="total">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Testes Aprovados</h3>
+            <p class="aprovados" id="aprovados">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Falhas</h3>
+            <p class="falhas" id="falhas">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Taxa de Aprovação</h3>
+            <p class="taxa" id="taxa">0%</p>
+        </div>
+
+    </section>
+
+    <section class="painel">
+
+        <h2>Resultados dos Testes</h2>
+
+        <button onclick="executarTestes()">
+            Executar Testes
+        </button>
+
+        <div class="tabela">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Teste</th>
+                        <th>Idade</th>
+                        <th>Resultado Esperado</th>
+                        <th>Resultado Obtido</th>
+                        <th>Situação</th>
+                    </tr>
+                </thead>
+
+                <tbody id="resultados">
+                    <tr>
+                        <td colspan="5">
+                            Clique em Executar Testes
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+    <section class="resumo">
+
+        <h2>Resumo da Execução</h2>
+
+        <p id="mensagem">
+            Aguardando execução dos testes.
+        </p>
+
+    </section>
+
+</div>
+
+<!-- Importa a função original -->
+<script src="idade.js"></script>
+
+<script>
+
+    function executarTestes() {
+
+        const casos = [
+            {
+                nome: "Pessoa adulta",
+                idade: 25,
+                esperado: true
+            },
+            {
+                nome: "Menor de idade",
+                idade: 15,
+                esperado: false
+            },
+            {
+                nome: "Idade limite",
+                idade: 18,
+                esperado: true
+            },
+            {
+                nome: "Idade de 17 anos",
+                idade: 17,
+                esperado: false
+            },
+            {
+                nome: "Idade zero",
+                idade: 0,
+                esperado: false
+            },
+            {
+                nome: "Idade negativa",
+                idade: -5,
+                esperado: false
+            }
+        ];
+
+        let aprovados = 0;
+        let falhas = 0;
+
+        const tabela = document.getElementById("resultados");
+
+        tabela.innerHTML = "";
+
+        casos.forEach((caso, indice) => {
+
+            let obtido;
+            let erro = false;
+
+            try {
+                obtido = verificarIdade(caso.idade);
+            } catch (e) {
+                erro = true;
+            }
+
+            const passou =
+                !erro && obtido === caso.esperado;
+
+            if (passou) {
+                aprovados++;
+            } else {
+                falhas++;
+            }
+
+            const linha = document.createElement("tr");
+
+            linha.innerHTML = `
+                <td>${indice + 1} - ${caso.nome}</td>
+
+                <td>${caso.idade}</td>
+
+                <td>${caso.esperado ? "true" : "false"}</td>
+
+                <td>${erro ? "Erro" : String(obtido)}</td>
+
+                <td class="${passou ? "passou" : "falhou"}">
+                    ${passou ? "PASSOU" : "FALHOU"}
+                </td>
+            `;
+
+            tabela.appendChild(linha);
+
+        });
+
+        const total = casos.length;
+
+        const taxa = ((aprovados / total) * 100).toFixed(1);
+
+        document.getElementById("total").textContent = total;
+
+        document.getElementById("aprovados").textContent =
+            aprovados;
+
+        document.getElementById("falhas").textContent =
+            falhas;
+
+        document.getElementById("taxa").textContent =
+            taxa + "%";
+
+        document.getElementById("mensagem").textContent =
+            falhas === 0
+            ? "Todos os testes foram aprovados com sucesso!"
+            : "Foram encontradas " + falhas + " falha(s).";
+
+    }
+
+    // Executa os testes ao abrir a página
+    executarTestes();
+
+</script>
+
+</body>
+</html>
